@@ -1,0 +1,17 @@
+package com.javarush.hayriyan.hibernate.dao;
+import com.javarush.hayriyan.hibernate.entity.Film;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+
+public class FilmDAO extends GenericDAO<Film> {
+    public FilmDAO(SessionFactory sessionFactory) {
+        super(Film.class, sessionFactory);
+    }
+
+    public Film getFirstAvailableFilmForRent() {
+        Query<Film> query = getCurrentSession().createQuery("select f From Film f " +
+                "where f.filmId not in (select distinct film.filmId from Inventory)",Film.class);
+        query.setMaxResults(1);
+        return query.getSingleResult();
+    }
+}
